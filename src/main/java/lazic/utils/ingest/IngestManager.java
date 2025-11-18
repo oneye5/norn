@@ -21,4 +21,11 @@ public enum IngestManager {
 			this.data.addAll(dataPoints);
 		});
 	}
+
+	public void printSubset(int count) {
+		data.stream()
+						.toList()
+						.subList(0, Math.min(data.size(), count))
+						.forEach(dp-> System.out.println(dp.toString()));
+	}
 }

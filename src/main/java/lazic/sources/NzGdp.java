@@ -5,7 +5,6 @@ import lazic.utils.ingest.DataSourceBase;
 import lazic.utils.ingest.WebHtmlGetter;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -26,37 +25,58 @@ public class NzGdp extends DataSourceBase {
 
 	/**
 	 * Parses the SDMX-ML XML raw data.
-	 * Extracts TIME_PERIOD, ObsValue, and uses fixed values for Ticker and Feature name.
+	 * Extracts TIME_PERIOD, SECTOR, TRANSACTION, ObsValue, and UNIT_MULT.
 	 */
 	private Set<DataPoint> parseXmlData(String rawData) {
 		Set<DataPoint> dataPoints = new HashSet<>();
-		// Define the regex pattern to capture a single observation:
-		// 1. TIME_PERIOD value (e.g., "2000-Q1")
-		// 2. ObsValue (the data value, e.g., "1318")
-		// Note: The data indicates UNIT_MULT="6" (Millions) and CURRENCY="NZD".
-		// We'll use the multiplier in the data conversion.
 
-		// Pattern to capture TIME_PERIOD and ObsValue from <generic:Obs> blocks
-		String regex = "<generic:Obs>.*?<generic:Value id=\"TIME_PERIOD\" value=\"(.*?)\" />.*?</generic:ObsKey><generic:ObsValue value=\"(.*?)\" />.*?<generic:Value id=\"UNIT_MULT\" value=\"(\\d)\" />";
+		// Updated Regex to capture TIME_PERIOD, SECTOR, TRANSACTION, ObsValue, and UNIT_MULT.
+		// Group 1: TIME_PERIOD value (e.g., "2023-Q2")
+		// Group 2: SECTOR value (e.g., "S13" or "S14")
+		// Group 3: TRANSACTION value (e.g., "P51G" or "P3")
+		// Group 4: ObsValue (the data value, e.g., "6569")
+		// Group 5: UNIT_MULT value (e.g., "6")
+		String regex = "<generic:Obs>.*?<generic:Value id=\"TIME_PERIOD\" value=\"(.*?)\" />.*?" +
+						"<generic:Value id=\"SECTOR\" value=\"(.*?)\" />.*?" +
+						"<generic:Value id=\"TRANSACTION\" value=\"(.*?)\" />.*?" +
+						"</generic:ObsKey><generic:ObsValue value=\"(.*?)\" />.*?<generic:Value id=\"UNIT_MULT\" value=\"(\\d)\" />";
+
 		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
 		Matcher matcher = pattern.matcher(rawData);
 
-		// The data is NZ GDP for "General Government (S13)" and "Non-profit institutions serving households (S14)"
-		// and TRANSACTION="P51G" which is "Gross fixed capital formation".
-		// For simplicity, we'll label the feature as 'NZ_GOV_NFISH_GFCF' (New Zealand Government/NFISH Gross Fixed Capital Formation).
-		final String featureName = "NZ_GOV_NFISH_GFCF_MillionsNZD";
-		final String ticker = null; // Macroeconomic data, so ticker is null
+		// Ticker is null for macroeconomic data
+		final String ticker = null;
+
+		// Look up map for better feature names (example, extend as needed)
+		final java.util.Map<String, String> sectorMap = new java.util.HashMap<>();
+		sectorMap.put("S13", "GeneralGovernment");
+		sectorMap.put("S14", "NFISH"); // Non-profit institutions serving households
+
+		final java.util.Map<String, String> transactionMap = new java.util.HashMap<>();
+		transactionMap.put("P51G", "GrossFixedCapitalFormation");
+		transactionMap.put("P3", "FinalConsumptionExpenditure");
+		// Add other relevant transaction codes from the data as needed
 
 		while (matcher.find()) {
 			String timePeriodStr = matcher.group(1);
-			String obsValueStr = matcher.group(2);
-			int unitMultiplierPower = Integer.parseInt(matcher.group(3)); // Should be '6' based on sample
+			String sectorCode = matcher.group(2);
+			String transactionCode = matcher.group(3);
+			String obsValueStr = matcher.group(4);
+			String unitMultiplierStr = matcher.group(5);
+
+			// Construct a meaningful feature name
+			String sectorName = sectorMap.getOrDefault(sectorCode, sectorCode);
+			String transactionName = transactionMap.getOrDefault(transactionCode, transactionCode);
+
+			// Example: NZL_GeneralGovernment_GrossFixedCapitalFormation_MillionsNZD
+			final String featureName = "NZL_" + sectorName + "_" + transactionName + "_MillionsNZD";
 
 			try {
 				// Convert the "YYYY-QX" quarter string to a LocalDateTime at the start of the quarter
 				LocalDateTime dateTime = convertQuarterToDateTime(timePeriodStr);
 
 				// Convert the value string to a Double, applying the unit multiplier (e.g., 10^6 for Millions)
+				int unitMultiplierPower = Integer.parseInt(unitMultiplierStr);
 				double rawValue = Double.parseDouble(obsValueStr);
 				double finalValue = rawValue * Math.pow(10, unitMultiplierPower);
 
@@ -64,7 +84,8 @@ public class NzGdp extends DataSourceBase {
 
 			} catch (Exception e) {
 				// Log or handle parsing errors if necessary
-				System.err.println("Error parsing data point: " + timePeriodStr + ", " + obsValueStr + ": " + e.getMessage());
+				System.err.println("Error parsing data point: " + timePeriodStr + ", " + obsValueStr +
+								", Sector: " + sectorCode + ", Transaction: " + transactionCode + ": " + e.getMessage());
 			}
 		}
 

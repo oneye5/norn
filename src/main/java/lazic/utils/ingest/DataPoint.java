@@ -8,7 +8,6 @@ public class DataPoint implements Serializable {
 	private String ticker;          // optional, may be null for macro data
 	private String featureName;     // e.g. "close_price", "inflation", "EPS"
 	private Double value;           // exactly one feature
-	private String source;          // where it came from
 
 	public DataPoint() {}
 
@@ -33,4 +32,12 @@ public class DataPoint implements Serializable {
 
 	public Double getValue() { return value; }
 	public void setValue(double value) { this.value = value; }
+
+	@Override
+	public String toString() {
+		return String.format(
+						"DataPoint(timestamp=%s, ticker=%s, feature=%s, value=%s)",
+						timestamp, ticker, featureName, value
+		);
+	}
 }
