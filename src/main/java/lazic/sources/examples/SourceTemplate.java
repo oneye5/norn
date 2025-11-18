@@ -1,7 +1,6 @@
-package lazic.sources;
+package lazic.sources.examples;
 
 import com.google.gson.Gson;
-import lazic.sources.config.Tickers;
 import lazic.utils.ingest.DataPoint;
 import lazic.utils.ingest.DataSourceBase;
 import lazic.utils.ingest.WebHtmlGetter;

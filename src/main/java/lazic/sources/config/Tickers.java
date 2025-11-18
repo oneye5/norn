@@ -2,11 +2,11 @@ package lazic.sources.config;
 
 public class Tickers {
 
-	public static final String[] TICKERS_DEBUG = { // small subset
-					"ANZ.NZ", "AFCA.NZ", "AFI.NZ",   "AFT.NZ", "AGG.NZ", "AGL.NZ", "AIA.NZ", "AIR.NZ", "ALF.NZ", "2CC2.NZ"
+	public static final String[] TICKERS = { // small subset
+					"ANZ.NZ", "AFCA.NZ", "AFI.NZ",   "AFT.NZ", "AGG.NZ"
 	};
 
-	public static final String[] TICKERS = {
+	public static final String[] _TICKERS = {
 					"ANZ.NZ", "AFCA.NZ", "AFI.NZ",   "AFT.NZ", "AGG.NZ", "AGL.NZ", "AIA.NZ", "AIR.NZ", "ALF.NZ", "2CC2.NZ",
 					"AOF.NZ", "APA.NZ", "APL.NZ", "ARB.NZ", "ARG.NZ", "ASD.NZ", "ASF.NZ", "ASP.NZ", "ASR.NZ", "ATM.NZ",
 					"AUE.NZ", "AUS.NZ", "BAI.NZ", "BFG.NZ", "BGP.NZ", "BIF.NZ", "BIT.NZ", "BLT.NZ", "BOT.NZ", "BPG.NZ",

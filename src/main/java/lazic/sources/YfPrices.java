@@ -24,7 +24,7 @@ public class YfPrices extends DataSourceBase {
 	@Override
 	public Set<DataPoint> getDataPoints() {
 		Set<DataPoint> dataPoints = new HashSet<>();
-		String[] tickers = Tickers.TICKERS_DEBUG;
+		String[] tickers = Tickers.TICKERS;
 		Gson gson = new Gson();
 
 		for (String ticker : tickers) {
