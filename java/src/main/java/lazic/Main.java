@@ -17,6 +17,6 @@ public class Main {
 
 		IngestManager.INSTANCE.fetchDataFromSources();
 		IngestManager.INSTANCE.printSubset(100);
-		CsvLongParser.saveCsv(Path.of("all_data_long.csv").toAbsolutePath().toString());
+		CsvLongParser.saveCsv(Path.of("/data/all_data_long.csv").toAbsolutePath().toString());
 	}
 }
