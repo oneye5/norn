@@ -20,7 +20,7 @@ public class CsvLongParser {
 		}
 
 		try (BufferedWriter bw = new BufferedWriter(new FileWriter(path))) {
-			bw.write("timestamp_ms,ticker,feature,value");
+			bw.write("timestamp,ticker,feature,value");
 			bw.newLine();
 
 			for (DataPoint dp : data) {
@@ -34,6 +34,16 @@ public class CsvLongParser {
 				String ticker = dp.getTicker() != null ? dp.getTicker() : "";
 				String feature = dp.getFeatureName() != null ? dp.getFeatureName() : "";
 				String value = dp.getValue() != null ? dp.getValue().toString() : "";
+
+				// clean of dangerous characters
+				ticker = ticker.replace(",","-");
+				ticker = ticker.replace("\n","-");
+
+				feature = feature.replace(",","-");
+				feature = feature.replace("\n","-");
+
+				value = value.replace(",","-");
+				value = value.replace("\n","-");
 
 				bw.write(ts + "," + ticker + "," + feature + "," + value);
 				bw.newLine();

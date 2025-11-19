@@ -39,3 +39,9 @@ build/
 /.idea
 *.csv
 /java/.idea
+/python-ml/src/utils/__pycache__
+/python-ml/.idea
+/python-ml/.idea
+python-ml/.idea/vcs.xml
+/python-ml/.idea/inspectionProfiles
+python-ml/.idea/inspectionProfiles/profiles_settings.xml
