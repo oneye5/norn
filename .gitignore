@@ -46,3 +46,6 @@ python-ml/.idea/vcs.xml
 /python-ml/.idea/inspectionProfiles
 python-ml/.idea/inspectionProfiles/profiles_settings.xml
 /python-ml/src/config/__pycache__
+python-ml/data/model.pkl
+python-ml/src/learner/__pycache__/__init__.cpython-311.pyc
+python-ml/src/learner/__pycache__/learner.cpython-311.pyc

@@ -6,14 +6,18 @@ from src.utils.csv_utils import load_csv, save_csv
 from src.utils.path_utils import get_skuld_root
 
 
+# =======================================================
+# === LABEL GENERATION =================================
+# =======================================================
+
 def create_future_labels(df: pd.DataFrame) -> pd.DataFrame:
     """
     For each row, create a label indicating whether the Close price increases
-    by at least THRESHOLD_PCT within FUTURE_DELTA_SEC seconds.
+    by at least THRESHOLD_PCT within FUTURE_DELTA_MILLIS milliseconds.
     The label is 1 if it increases, 0 otherwise.
     """
     df = df.sort_values([TICKER_COL, TIMESTAMP_COL]).reset_index(drop=True)
-    df["future_ts"] = df[TIMESTAMP_COL] + FUTURE_DELTA_SEC
+    df["future_ts"] = df[TIMESTAMP_COL] + FUTURE_DELTA_MILLIS
 
     labeled_frames = []
 
@@ -32,7 +36,7 @@ def create_future_labels(df: pd.DataFrame) -> pd.DataFrame:
         # Compute label as 1 if future_close >= threshold increase, else 0
         g[LABEL_COL] = (
             ((g["future_close"] - g[CLOSE_COL]) / g[CLOSE_COL]) >= THRESHOLD_PCT
-        ).astype(int)
+        ).astype("int8")
 
         labeled_frames.append(g)
 
@@ -44,19 +48,45 @@ def create_future_labels(df: pd.DataFrame) -> pd.DataFrame:
     # Drop helper columns
     df_out = df_out.drop(columns=["future_ts", "future_close"])
 
-    # Ensure label column is integer type
-    df_out[LABEL_COL] = df_out[LABEL_COL].astype("int8")
-
     return df_out
 
 
+# =======================================================
+# === ONE-HOT ENCODING =================================
+# =======================================================
+
 def one_hot_encode(df: pd.DataFrame) -> pd.DataFrame:
     """
-    One-hot encode the ticker column.
+    One-hot encode the ticker column using TICKER_PREFIX from config.
     """
-    df = pd.get_dummies(df, columns=[TICKER_COL], prefix="ticker", dtype="int8")
+    df = pd.get_dummies(df, columns=[TICKER_COL], prefix=TICKER_PREFIX, dtype="int8")
     return df
 
+
+# =======================================================
+# === RESTORE TICKER FOR EVALUATION ====================
+# =======================================================
+
+def restore_ticker_column(df: pd.DataFrame, prefix: str = TICKER_PREFIX) -> pd.DataFrame:
+    """
+    Reconstruct the original ticker column from one-hot encoded columns.
+    Assumes only one 1 per row for the ticker one-hot columns.
+    """
+    ticker_cols = [c for c in df.columns if c.startswith(f"{prefix}_")]
+    if not ticker_cols:
+        # No one-hot columns, assume ticker column exists
+        return df
+
+    # Reconstruct ticker
+    df[TICKER_COL] = df[ticker_cols].idxmax(axis=1)
+    # Remove prefix to restore original ticker names
+    df[TICKER_COL] = df[TICKER_COL].str[len(prefix)+1:]  # +1 for underscore
+    return df
+
+
+# =======================================================
+# === FULL PREPROCESSING PIPELINE =====================
+# =======================================================
 
 def preprocess(wide_csv_path: str, output_csv_path: str):
     """
@@ -77,6 +107,10 @@ def preprocess(wide_csv_path: str, output_csv_path: str):
     save_csv(df, output_csv_path)
     print(f"Preprocessed CSV saved to {output_csv_path}")
 
+
+# =======================================================
+# === ENTRYPOINT =======================================
+# =======================================================
 
 if __name__ == "__main__":
     root = get_skuld_root()
