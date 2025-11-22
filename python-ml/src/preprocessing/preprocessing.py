@@ -17,7 +17,7 @@ def create_future_labels(df: pd.DataFrame) -> pd.DataFrame:
     The label is 1 if it increases, 0 otherwise.
     """
     df = df.sort_values([TICKER_COL, TIMESTAMP_COL]).reset_index(drop=True)
-    df["future_ts"] = df[TIMESTAMP_COL] + FUTURE_DELTA_MILLIS
+    df["future_ts"] = df[TIMESTAMP_COL] + LABEL_LOOKAHEAD_MILLIS
 
     labeled_frames = []
 
@@ -111,6 +111,7 @@ def preprocess(wide_csv_path: str, output_csv_path: str):
 # =======================================================
 # === ENTRYPOINT =======================================
 # =======================================================
+
 
 if __name__ == "__main__":
     root = get_skuld_root()

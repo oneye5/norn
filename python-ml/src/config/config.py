@@ -7,10 +7,10 @@ _day = 1000 * 60 * 60 * 24
 _year = _day * 365
 
 # milliseconds into the future to check for price movement
-FUTURE_DELTA_MILLIS = _day * 128
+LABEL_LOOKAHEAD_MILLIS = _year
 
 # Test duration
-TEST_DELTA_SEC = _day * 30
+TEST_SPLIT_DURATION_MILLIS = _day * 128
 
 
 # Column names
@@ -24,9 +24,9 @@ PRICE_COL = "Close"
 PREDICTION_COL = "pred_prob"
 TICKER_PREFIX = "#TICKER#"
 
-ANALYSIS_TRAIN_DELTA_MILLIS = _day * 90   # 90 days
-ANALYSIS_TEST_DELTA_MILLIS = _day * 30    # 30 days
-ANALYSIS_STEP_MILLIS = _day * 1           # 1 day
+# Analysis & evaluation
+EVAL_TEST_ITERATIONS = 100
+
 
 
 
