@@ -10,7 +10,7 @@ _year = _day * 365
 LABEL_LOOKAHEAD_MILLIS = _year
 
 # Test duration
-TEST_SPLIT_DURATION_MILLIS = _day * 128
+TEST_SPLIT_DURATION_MILLIS = _year / 4
 
 
 # Column names
@@ -25,7 +25,7 @@ PREDICTION_COL = "pred_prob"
 TICKER_PREFIX = "#TICKER#"
 
 # Analysis & evaluation
-EVAL_TEST_ITERATIONS = 100
+EVAL_TEST_ITERATIONS = 25
 
 
 
