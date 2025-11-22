@@ -35,7 +35,7 @@ def create_future_labels(df: pd.DataFrame) -> pd.DataFrame:
 
         # Compute label as 1 if future_close >= threshold increase, else 0
         g[LABEL_COL] = (
-            ((g["future_close"] - g[CLOSE_COL]) / g[CLOSE_COL]) >= THRESHOLD_PCT
+            ((g["future_close"] - g[CLOSE_COL]) / (g[CLOSE_COL] + 0.0000000001)) >= THRESHOLD_PCT
         ).astype("int8")
 
         labeled_frames.append(g)
