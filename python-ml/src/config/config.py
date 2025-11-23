@@ -1,33 +1,34 @@
 # Percentage change required to label = 1
 # Example: 0.02 = +2% price increase
+from src.utils.path_utils import get_skuld_root
+
 THRESHOLD_PCT = 0.02
 
 
 _day = 1000 * 60 * 60 * 24
 _year = _day * 365
 
-# milliseconds into the future to check for price movement
-LABEL_LOOKAHEAD_MILLIS = _year
-
-# Test duration
-TEST_SPLIT_DURATION_MILLIS = _year / 4
-
+LABEL_LOOKAHEAD_MILLIS = _year # milliseconds into the future for price movement
+TEST_SPLIT_DURATION_MILLIS = _year / 4 # test split size by time
+EVAL_TEST_ITERATIONS = 25 # how many iterations to run sliding window over
 
 # Column names
 TIMESTAMP_COL = "timestamp"
 TICKER_COL = "ticker"
 CLOSE_COL = "Close"
-
-# Output label column
 LABEL_COL = "label"
 PRICE_COL = "Close"
 PREDICTION_COL = "pred_prob"
 TICKER_PREFIX = "#TICKER#"
 
-# Analysis & evaluation
-EVAL_TEST_ITERATIONS = 25
-
-
-
+# File paths
+_root = get_skuld_root()
+TRAIN_CSV_PATH = _root / "python-ml" / "data" / "train.csv"
+TEST_CSV_PATH = _root / "python-ml" / "data" / "test.csv"
+PREPROCESSED_CSV_PATH = _root / "python-ml" / "data" / "data_preprocessed.csv"
+MODEL_PKL_PATH = _root / "python-ml" / "data" / "model.pkl"
+PREDICTION_CSV_PATH = _root / "python-ml" / "data" / "predictions"
+LONG_CSV_PATH = _root / "data" / "data_long.csv"
+WIDE_CSV_PATH = _root / "python-ml" / "data" / "data_wide_imputed.csv"
 
 print("This file is not intended to be runnable")

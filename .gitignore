@@ -51,3 +51,5 @@ python-ml/src/learner/__pycache__/__init__.cpython-311.pyc
 python-ml/src/learner/__pycache__/learner.cpython-311.pyc
 /python-ml/src/evaluation/__pycache__
 /python-ml/src/preprocessing/__pycache__
+/python-ml/.continue
+python-ml/.continue/rules/new-rule.md
